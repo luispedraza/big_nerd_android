@@ -28,8 +28,7 @@
 
         <Button
             android:id="@+id/true_button"
-            android:drawableLeft="@mipmap/arrow_left"
-            android:drawablePadding="4dp"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/true_button"
@@ -37,17 +36,34 @@
             />
         <Button
             android:id="@+id/false_button"
-            android:drawableRight="@mipmap/arrow_right"
-            android:drawablePadding="4dp"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/false_button"/>
     </LinearLayout>
 
-    <Button
-        android:id="@+id/next_button"
-        android:text="@string/next_button"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/prev_button"
+            android:text="@string/prev_button"
+            android:drawableLeft="@mipmap/arrow_left"
+            android:drawablePadding="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/next_button"
+            android:text="@string/next_button"
+            android:drawableRight="@mipmap/arrow_right"
+            android:drawablePadding="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+
+
 
 </LinearLayout>
