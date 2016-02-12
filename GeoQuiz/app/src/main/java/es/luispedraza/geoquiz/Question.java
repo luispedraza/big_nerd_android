@@ -4,12 +4,12 @@ package es.luispedraza.geoquiz;
  * Created by luis on 11/2/16.
  */
 public class Question {
-    private int mTextResId;
+    private String mQuestionText;
     private boolean mAnswerTrue;
 
-    public Question(boolean answerTrue, int textResId) {
+    public Question(boolean answerTrue, String questionText) {
         mAnswerTrue = answerTrue;
-        mTextResId = textResId;
+        mQuestionText = questionText;
     }
 
     public boolean isAnswerTrue() {
@@ -20,11 +20,11 @@ public class Question {
         mAnswerTrue = answerTrue;
     }
 
-    public int getTextResId() {
-        return mTextResId;
+    public String getQuestionText() {
+        return mQuestionText;
     }
 
-    public void setTextResId(int textResId) {
-        mTextResId = textResId;
+    public void setQuestionText(String questionText) {
+        mQuestionText = questionText;
     }
 }

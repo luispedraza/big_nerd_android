@@ -2,16 +2,33 @@ package es.luispedraza.geoquiz;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 
 public class QuizActivity extends AppCompatActivity {
 
+    private static String LOG_TAG = QuizActivity.class.getSimpleName();
+
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mNextButton;
+    private TextView mQuestionTextView;
+    private int mCurrentIndex = 0;
+
+    private ArrayList<Question> mQuestionPool = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,20 +39,36 @@ public class QuizActivity extends AppCompatActivity {
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
+        mNextButton = (Button) findViewById(R.id.next_button);
+        mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+
+
 
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT).show();
+                checkAnswer(true);
             }
         });
 
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(QuizActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT).show();
+                checkAnswer(false);
             }
         });
+
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionPool.size();
+                updateView();
+            }
+        });
+        loadQuestionsJson();
+        updateView();
+
+
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,5 +104,53 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateView() {
+        Question currentQuestion = mQuestionPool.get(mCurrentIndex);
+        mQuestionTextView.setText(currentQuestion.getQuestionText());
+
+    }
+
+    private void loadQuestionsJson() {
+        mQuestionPool.clear();
+        InputStream jsonStream = this.getResources().openRawResource(R.raw.questions);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        int b;
+        try {
+            while ((b = jsonStream.read()) != -1) {
+                byteArrayOutputStream.write(b);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(LOG_TAG, byteArrayOutputStream.toString());
+
+        try {
+            // parse data into json object
+            JSONObject jsonObject = new JSONObject(byteArrayOutputStream.toString());
+            JSONArray jsonQuestions = jsonObject.getJSONArray("questions");
+
+            for (int i = 0; i < jsonQuestions.length(); i++) {
+                JSONObject jsonQ = jsonQuestions.getJSONObject(i);
+                Question question = new Question(jsonQ.getBoolean("isTrue"),
+                        jsonQ.getString("question"));
+                mQuestionPool.add(question);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        Log.v(LOG_TAG, mQuestionPool.toString());
+    }
+
+    private void checkAnswer(boolean isTrue) {
+        Toast.makeText(QuizActivity.this,
+                (isTrue == mQuestionPool.get(mCurrentIndex).isAnswerTrue()) ? R.string.correct_toast : R.string.incorrect_toast,
+                Toast.LENGTH_SHORT).show();
     }
 }
