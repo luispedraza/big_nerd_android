@@ -42,7 +42,13 @@ public class QuizActivity extends AppCompatActivity {
         mNextButton = (Button) findViewById(R.id.next_button);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
-
+        View.OnClickListener nextQuestionListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionPool.size();
+                updateView();
+            }
+        };
 
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,13 +64,10 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        mNextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionPool.size();
-                updateView();
-            }
-        });
+        mNextButton.setOnClickListener(nextQuestionListener);
+        mQuestionTextView.setOnClickListener(nextQuestionListener);
+
+
         loadQuestionsJson();
         updateView();
 
