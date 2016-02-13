@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +24,8 @@ public class QuizActivity extends AppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
-    private ImageButton mNextButton;
-    private ImageButton mPrevButton;
+    private View mNextButton;
+    private View mPrevButton;
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
@@ -43,10 +42,8 @@ public class QuizActivity extends AppCompatActivity {
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
-        mNextButton = (ImageButton) findViewById(R.id.next_button);
-        mNextButton.setTag(1);
-        mPrevButton = (ImageButton) findViewById(R.id.prev_button);
-        mPrevButton.setTag(-1);
+        mNextButton = findViewById(R.id.next_button);
+        mPrevButton = findViewById(R.id.prev_button);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
         View.OnClickListener nextQuestionListener = new View.OnClickListener() {
@@ -64,7 +61,6 @@ public class QuizActivity extends AppCompatActivity {
                 checkAnswer(true);
             }
         });
-
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,28 +68,19 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        mNextButton.setOnClickListener(nextQuestionListener);
-        mPrevButton.setOnClickListener(nextQuestionListener);
+        if (mNextButton != null) {
+            mNextButton.setTag(1);
+            mNextButton.setOnClickListener(nextQuestionListener);
+        }
+        if (mPrevButton != null) {
+            mPrevButton.setOnClickListener(nextQuestionListener);
+            mPrevButton.setTag(-1);
+        }
         mQuestionTextView.setOnClickListener(nextQuestionListener);
-
 
         loadQuestionsJson();
         updateView();
 
-
-
-
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
     }
 
     @Override
