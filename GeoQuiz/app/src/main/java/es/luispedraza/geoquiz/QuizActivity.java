@@ -29,16 +29,21 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
+    private static final String KEY_INDEX = "index";
+
     private ArrayList<Question> mQuestionPool = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(LOG_TAG, "onCreate(Bundle) called");
-
-
         super.onCreate(savedInstanceState);
+        Log.d(LOG_TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
+
+        // recover previous state of the App
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
+        }
 
         mTrueButton = (Button) findViewById(R.id.true_button);
         mFalseButton = (Button) findViewById(R.id.false_button);
@@ -181,5 +186,12 @@ public class QuizActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy() called");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(LOG_TAG, "onSaveInstanceState()");
+        outState.putInt(KEY_INDEX, mCurrentIndex);
     }
 }
