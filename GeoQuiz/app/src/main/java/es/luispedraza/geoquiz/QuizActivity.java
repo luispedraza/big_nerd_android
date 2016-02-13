@@ -35,6 +35,8 @@ public class QuizActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Log.d(LOG_TAG, "onCreate(Bundle) called");
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
@@ -162,5 +164,35 @@ public class QuizActivity extends AppCompatActivity {
         Toast.makeText(QuizActivity.this,
                 (isTrue == mQuestionPool.get(mCurrentIndex).isAnswerTrue()) ? R.string.correct_toast : R.string.incorrect_toast,
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(LOG_TAG, "onStart() called");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "onResume() called");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "onPause() called");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "onStop() called");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "onDestroy() called");
     }
 }
