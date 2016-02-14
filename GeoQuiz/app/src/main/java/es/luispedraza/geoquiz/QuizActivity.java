@@ -33,10 +33,10 @@ public class QuizActivity extends AppCompatActivity {
     private int mCurrentIndex = 0;
 
     private Button mCheatButton;
-    private boolean mIsCheater = false;
 
     private static final String KEY_INDEX = "index";
-    private static final String KEY_USER_CHEATED = "user_cheated";
+    private static final String KEY_CHEATS = "cheats";
+
 
     private ArrayList<Question> mQuestionPool = new ArrayList<>();
 
@@ -47,10 +47,17 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(LOG_TAG, "onCreate(Bundle) called");
         setContentView(R.layout.activity_quiz);
 
+        loadQuestionsJson();
+
         // recover previous state of the App
         if (savedInstanceState != null) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX);
-            mIsCheater = savedInstanceState.getBoolean(KEY_USER_CHEATED);
+            ArrayList<Integer> cheats = savedInstanceState.getIntegerArrayList(KEY_CHEATS);
+            if (cheats != null) {
+                for (int i = 0; i < cheats.size(); i++) {
+                    mQuestionPool.get(cheats.get(i)).setUserCheated(true);
+                }
+            }
         }
 
         mTrueButton = (Button) findViewById(R.id.true_button);
@@ -105,7 +112,7 @@ public class QuizActivity extends AppCompatActivity {
             }
         });
 
-        loadQuestionsJson();
+
         updateView();
 
     }
@@ -175,14 +182,13 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean isTrue) {
-        if (mIsCheater)
+        if (mQuestionPool.get(mCurrentIndex).isUserCheated())
             Toast.makeText(QuizActivity.this, R.string.judgement_toast, Toast.LENGTH_SHORT).show();
         else {
             Toast.makeText(QuizActivity.this,
                     (isTrue == mQuestionPool.get(mCurrentIndex).isAnswerTrue()) ? R.string.correct_toast : R.string.incorrect_toast,
                     Toast.LENGTH_SHORT).show();
         }
-        mIsCheater = false;
     }
 
     @Override
@@ -220,7 +226,13 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState()");
         outState.putInt(KEY_INDEX, mCurrentIndex);
-        outState.putBoolean(KEY_USER_CHEATED, mIsCheater);
+        ArrayList<Integer> cheats = new ArrayList<>();
+        for (int i = 0; i < mQuestionPool.size(); i++) {
+            if (mQuestionPool.get(i).isUserCheated()) {
+                cheats.add(i);
+            }
+        }
+        outState.putIntegerArrayList(KEY_CHEATS, cheats);
     }
 
     @Override
@@ -232,8 +244,9 @@ public class QuizActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_CHEAT) {
             if (data == null) return;
 
-            mIsCheater = CheatActivity.wasAnswerShown(data);
-            Log.v(LOG_TAG, "Result is: " + mIsCheater);
+            boolean isCheater = CheatActivity.wasAnswerShown(data);
+            Question question = mQuestionPool.get(mCurrentIndex);
+            question.setUserCheated(isCheater);
         }
 
     }

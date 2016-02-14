@@ -6,6 +6,8 @@ package es.luispedraza.geoquiz;
 public class Question {
     private String mQuestionText;
     private boolean mAnswerTrue;
+    private boolean mUserCheated = false;
+
 
     public Question(boolean answerTrue, String questionText) {
         mAnswerTrue = answerTrue;
@@ -26,5 +28,13 @@ public class Question {
 
     public void setQuestionText(String questionText) {
         mQuestionText = questionText;
+    }
+
+    public boolean isUserCheated() {
+        return mUserCheated;
+    }
+
+    public void setUserCheated(boolean userCheated) {
+        mUserCheated = userCheated;
     }
 }
