@@ -4,16 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class CheatActivity extends AppCompatActivity {
+    private static final String LOG_TAG = CheatActivity.class.getSimpleName();
 
     private static final String EXTRA_ANSWER_IS_TRUE = "es.luispedraza.geoquiz.answer_is_true";
     private static final String EXTRA_ANSWER_SHOWN = "es.luispedraza.geoquiz.answer_shown";
+    private static final String KEY_USER_CHEATED = "user_cheated";
 
-    boolean mAnswerisTrue;
+    private boolean mAnswerisTrue;
+    private boolean mUserCheated = false;
 
     private TextView mAnswerTextView;
     private Button mShowAnswerButton;
@@ -30,6 +34,7 @@ public class CheatActivity extends AppCompatActivity {
         setResult(RESULT_OK, i);
     }
 
+    /* Helper method */
     public static boolean wasAnswerShown(Intent result) {
         return result.getBooleanExtra(EXTRA_ANSWER_SHOWN, false);
     }
@@ -38,6 +43,12 @@ public class CheatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
+
+        if (savedInstanceState != null) {
+            Log.v(LOG_TAG, "Recovering previous state");
+            mUserCheated = savedInstanceState.getBoolean(KEY_USER_CHEATED);
+            setAnswerShown(mUserCheated);
+        }
 
         mAnswerisTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 
@@ -48,8 +59,16 @@ public class CheatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mAnswerTextView.setText(mAnswerisTrue ? R.string.true_button : R.string.false_button);
-                setAnswerShown(true);
+                mUserCheated = true;
+                setAnswerShown(mUserCheated);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.v(LOG_TAG, "onSaveInstanceState()");
+        outState.putBoolean(KEY_USER_CHEATED, mUserCheated);
     }
 }
