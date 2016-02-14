@@ -1,5 +1,6 @@
 package es.luispedraza.geoquiz;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -29,6 +30,8 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
+    Button mCheatButton;
+
     private static final String KEY_INDEX = "index";
 
     private ArrayList<Question> mQuestionPool = new ArrayList<>();
@@ -50,6 +53,10 @@ public class QuizActivity extends AppCompatActivity {
         mNextButton = findViewById(R.id.next_button);
         mPrevButton = findViewById(R.id.prev_button);
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
+
+        mCheatButton = (Button) findViewById(R.id.cheat_button);
+
+
 
         View.OnClickListener nextQuestionListener = new View.OnClickListener() {
             @Override
@@ -82,6 +89,14 @@ public class QuizActivity extends AppCompatActivity {
             mPrevButton.setTag(-1);
         }
         mQuestionTextView.setOnClickListener(nextQuestionListener);
+
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent cheatIntent = new Intent(QuizActivity.this, CheatActivity.class);
+                startActivity(cheatIntent);
+            }
+        });
 
         loadQuestionsJson();
         updateView();
