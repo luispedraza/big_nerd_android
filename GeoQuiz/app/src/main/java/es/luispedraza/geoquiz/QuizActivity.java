@@ -21,7 +21,9 @@ import java.util.ArrayList;
 
 public class QuizActivity extends AppCompatActivity {
 
-    private static String LOG_TAG = QuizActivity.class.getSimpleName();
+    private static final String LOG_TAG = QuizActivity.class.getSimpleName();
+    private static final int REQUEST_CODE_CHEAT = 0;
+
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -30,7 +32,8 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
     private int mCurrentIndex = 0;
 
-    Button mCheatButton;
+    private Button mCheatButton;
+    private boolean mIsCheater;
 
     private static final String KEY_INDEX = "index";
 
@@ -95,7 +98,8 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent cheatIntent = CheatActivity.createNewIntent(QuizActivity.this,
                         mQuestionPool.get(mCurrentIndex).isAnswerTrue());
-                startActivity(cheatIntent);
+                // startActivity(cheatIntent);
+                startActivityForResult(cheatIntent, REQUEST_CODE_CHEAT);
             }
         });
 
@@ -169,9 +173,14 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void checkAnswer(boolean isTrue) {
-        Toast.makeText(QuizActivity.this,
-                (isTrue == mQuestionPool.get(mCurrentIndex).isAnswerTrue()) ? R.string.correct_toast : R.string.incorrect_toast,
-                Toast.LENGTH_SHORT).show();
+        if (mIsCheater)
+            Toast.makeText(QuizActivity.this, R.string.judgement_toast, Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(QuizActivity.this,
+                    (isTrue == mQuestionPool.get(mCurrentIndex).isAnswerTrue()) ? R.string.correct_toast : R.string.incorrect_toast,
+                    Toast.LENGTH_SHORT).show();
+        }
+        mIsCheater = false;
     }
 
     @Override
@@ -209,5 +218,20 @@ public class QuizActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         Log.d(LOG_TAG, "onSaveInstanceState()");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != RESULT_OK) return;
+
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            if (data == null) return;
+
+            mIsCheater = CheatActivity.wasAnswerShown(data);
+            Log.v(LOG_TAG, "Result is: " + mIsCheater);
+        }
+
     }
 }
