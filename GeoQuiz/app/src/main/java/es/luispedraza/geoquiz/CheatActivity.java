@@ -53,6 +53,11 @@ public class CheatActivity extends AppCompatActivity {
             setAnswerShown(mUserCheated);
         }
 
+        // Show current device api leve information:
+        final int API_LEVEL = Build.VERSION.SDK_INT;
+        ((TextView)findViewById(R.id.api_level_info)).setText("API level " + API_LEVEL);
+
+
         mAnswerisTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 
         mAnswerTextView = (TextView) findViewById(R.id.cheat_text_view);
