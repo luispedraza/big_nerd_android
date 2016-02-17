@@ -15,6 +15,10 @@ public class Crime {
         mId = UUID.randomUUID();
     }
 
+    public Crime() {
+        this("");
+    }
+
     public UUID getId() {
         return mId;
     }
